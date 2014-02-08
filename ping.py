@@ -26,6 +26,6 @@ while 1:
     data = s.recv(64)
     if data[:1] == "Q":
         reply = data.split()
-        print "Reply from %s ttl: %s" % (reply[1],reply[2])
+        print "Reply from node: %s ttl: %s sec." % (reply[1],reply[2])
         break 
 s.close
