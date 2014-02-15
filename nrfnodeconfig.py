@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 from struct import *
 import socket
 
@@ -68,6 +70,12 @@ class MyApp(wx.App):
         m_text = wx.StaticText(self.panel, -1, "Node ID:", (10,10))
         self.nodeid = wx.TextCtrl(self.panel, 201, pos=(70,10), size=wx.Size(60,20))
 
+        m_text = wx.StaticText(self.panel, -1, "New node ID:", (140,10))
+        self.newnodeid = wx.TextCtrl(self.panel, 201, pos=(230,10), size=wx.Size(60,20))
+
+        b = wx.Button(self.panel, -1, "Set", (300,10))
+        self.Bind(wx.EVT_BUTTON, self.SetID, b)
+ 
 
         b = wx.Button(self.panel, -1, "1W On", (10,35))
         self.Bind(wx.EVT_BUTTON, self.OneWireOn, b)
@@ -122,6 +130,12 @@ class MyApp(wx.App):
         b = wx.Button(self.panel, -1, "A7 Off", (300,175))
         self.Bind(wx.EVT_BUTTON, self.OnAnalogConfig, b)
         self.frame.Show()
+
+    def SetID(self, evt):
+        nodeid = int(self.nodeid.GetValue())
+        newnodeid = int(self.newnodeid.GetValue())
+        data = pack('HcBH',nodeid, 'C', 6, newnodeid)
+        s.send(data)
 
     def OneWireOn(self, evt):
         nodeid = int(self.nodeid.GetValue())
