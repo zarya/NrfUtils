@@ -12,9 +12,13 @@ if sys.argv[1]is None:
     print "run like `ping.py 5`"
     sys.exit(1)
 
+nodeaddress = "%o" % int(sys.argv[1],8)
+if nodeaddress.find("0") != -1 or nodeaddress.find("6") != -1 or nodeaddress.find("7") != -1:
+    print "Invalid node address"
+    sys.exit(1)
 ping_id = random.randrange(0, 9999)
 current_time = current_milli_time()
-data = pack('<HcH', int(sys.argv[1]), 'P', ping_id)
+data = pack('<HcH', int(sys.argv[1],8), 'P', ping_id)
 s = socket.socket()         # Create a socket object
 host = "10.38.18.105" # Get local machine name
 port = 12345                # Reserve a port for your service.
@@ -27,7 +31,7 @@ while 1:
         reply = data.split()
         if int(reply[2]) == ping_id:
             reply_time = now_time - current_time
-            print "Reply from node: %s ttl: %i ms." % (reply[1],reply_time)
+            print "Reply from node: %o ttl: %i ms." % (int(reply[1]),reply_time)
             break
     if (now_time - current_time) > 9000:
         print "Ping timeout"

@@ -73,7 +73,7 @@ class MyApp(wx.App):
         m_text = wx.StaticText(self.panel, -1, "New node ID:", (140,10))
         self.newnodeid = wx.TextCtrl(self.panel, 201, pos=(230,10), size=wx.Size(60,20))
 
-        b = wx.Button(self.panel, -1, "Set", (300,10))
+        b = wx.Button(self.panel, -1, "Set", (300,5))
         self.Bind(wx.EVT_BUTTON, self.SetID, b)
  
 
@@ -132,18 +132,18 @@ class MyApp(wx.App):
         self.frame.Show()
 
     def SetID(self, evt):
-        nodeid = int(self.nodeid.GetValue())
-        newnodeid = int(self.newnodeid.GetValue())
+        nodeid = int(self.nodeid.GetValue(),8)
+        newnodeid = int(self.newnodeid.GetValue(),8)
         data = pack('HcBH',nodeid, 'C', 6, newnodeid)
         s.send(data)
 
     def OneWireOn(self, evt):
-        nodeid = int(self.nodeid.GetValue())
+        nodeid = int(self.nodeid.GetValue(),8)
         data = pack('HcBB', nodeid, 'C', 12,1)
         s.send(data)
 
     def OneWireOff(self, evt):
-        nodeid = int(self.nodeid.GetValue())
+        nodeid = int(self.nodeid.GetValue(),8)
         data = pack('HcBB', nodeid, 'C', 12,0)
         s.send(data)
 
@@ -153,7 +153,7 @@ class MyApp(wx.App):
         dlg.Destroy()
 
     def OnAnalogConfig(self, event):
-        nodeid = int(self.nodeid.GetValue())
+        nodeid = int(self.nodeid.GetValue(),8)
         btn = event.GetEventObject()
         pinid = int(btn.GetLabelText()[1:2])
         action = btn.GetLabelText()[4:5]
@@ -167,7 +167,7 @@ class MyApp(wx.App):
         s.send(data)
 
     def OnPulseConfig(self, event):
-        nodeid = int(self.nodeid.GetValue())
+        nodeid = int(self.nodeid.GetValue(),8)
         btn = event.GetEventObject()
         pinid = int(btn.GetLabelText()[1:2])
         action = btn.GetLabelText()[4:5]
