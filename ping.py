@@ -24,7 +24,7 @@ while 1:
     if data[:1] == "Q":
         reply = data.split()
         current_time = int(str(current_milli_time())[-4:])
-        reply_time = current_time - int(reply[2])
-        print "Reply from node: %s ttl: %s ms." % (reply[1],reply[2])
+        reply_time = float(current_time - int(reply[2]))
+        print "Reply from node: %s ttl: %0.02f ms." % (reply[1],reply_time)
         break 
 s.close
