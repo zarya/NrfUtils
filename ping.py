@@ -26,8 +26,8 @@ while 1:
     if data[:1] == "Q":
         reply = data.split()
         if int(reply[2]) == ping_id:
-            reply_time = float(now_time - current_time)
-            print "Reply from node: %s ttl: %0.02f ms." % (reply[1],reply_time)
+            reply_time = now_time - current_time
+            print "Reply from node: %s ttl: %i ms." % (reply[1],reply_time)
             break
     if (now_time - current_time) > 9000:
         print "Ping timeout"
