@@ -5,6 +5,11 @@ import socket
 import time
 import random
 from optparse import OptionParser
+import ConfigParser
+
+config = ConfigParser.RawConfigParser()
+config.read('NrfUtils.conf')
+
 
 current_milli_time = lambda: int(round(time.time() * 1000))
 
@@ -20,9 +25,7 @@ ping_id = random.randrange(0, 9999)
 current_time = current_milli_time()
 data = pack('<HcH', int(sys.argv[1],8), 'P', ping_id)
 s = socket.socket()         # Create a socket object
-host = "10.38.18.105" # Get local machine name
-port = 12345                # Reserve a port for your service.
-s.connect((host, port))
+s.connect((config.get('NrfPiNode', 'hostname'), int(config.get('NrfPiNode', 'port'))))
 s.send(data)
 while 1:
     data = s.recv(64)

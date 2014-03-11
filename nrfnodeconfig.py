@@ -7,11 +7,13 @@ import wx
 from wx.lib.wordwrap import wordwrap
 import wx, wx.html
 import sys
+import ConfigParser
+
+config = ConfigParser.RawConfigParser()
+config.read('NrfUtils.conf')
 
 s = socket.socket()         # Create a socket object
-host = "10.38.18.105" # Get local machine name
-port = 12345                # Reserve a port for your service.
-s.connect((host, port))
+s.connect((config.get('NrfPiNode', 'hostname'), int(config.get('NrfPiNode', 'port'))))
 
 aboutText = """<p>Sorry, there is no information about this program. It is
 running on version %(wxpy)s of <b>wxPython</b> and %(python)s of <b>Python</b>.
@@ -181,17 +183,14 @@ class MyApp(wx.App):
         s.send(data)
 
     def OnDhtOn(self, event):
-        dlg = wx.TextEntryDialog(self.panel, 'Enter IO Pin numer:',"Pin:","", style=wx.OK)
-        dlg.ShowModal()
-        new_dht = int(dlg.GetValue())
-        if new_dht == 0 or new_dht == 2 or new_dht == 3 or new_dht == 4 or new_dht == 6 or new_dht == 9 or new_dht == 10:
-            data = pack('HcBh', nodeid, 'C', 22,new_dht)
-            s.send(data)
-        else:
-            self.showMessageDlg("Wrong pin try again", "ERROR", wx.OK|wx.ICON_EXCLAMATION)
+        nodeid = int(self.nodeid.GetValue(),8)
+        new_dht = 1
+        data = pack('HcBh', nodeid, 'C', 21,new_dht)
+        s.send(data)
 
     def OnDhtOff(self, event):
-        data = pack('HcBh', nodeid, 'C', 22,0)
+        nodeid = int(self.nodeid.GetValue(),8)
+        data = pack('HcBh', nodeid, 'C', 21,0)
         s.send(data)
 if __name__ == '__main__':
     app = MyApp()
