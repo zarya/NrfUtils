@@ -18,7 +18,7 @@ s.connect((config.get('NrfPiNode', 'hostname'), int(config.get('NrfPiNode', 'por
 
 def draw(storage):
     os.system('clear')
-    print "Node\tLast\tInterval\tBattery"
+    print "Node\tLast\tType\tInterval\tBattery"
     for k, v in sorted(storage.iteritems()):
         nodeid = k
         oldts = v['bts']-v['oldts']
@@ -27,22 +27,29 @@ def draw(storage):
         if v['oldts'] == 0:
             oldts = "\t"
         if float(v['batv']) == 0:
-            print "%s\t%s\t\t\tNa"%(nodeid,int(time.time()-v['ts']))
+            print "%s\t%s\t%s\t\t\tNa"%(nodeid,int(time.time()-v['ts']),v['lasttype'])
         else:
-            print "%s\t%s\t%s\t%0.2f (failure in %0.2f)"%(nodeid,int(time.time()-v['ts']),oldts,float(v['batv']),float(v['batv']) - 3.00)
+            print "%s\t%s\t%s\t%s\t%0.2f (failure in %0.2f)"%(nodeid,int(time.time()-v['ts']),v['lasttype'],oldts,float(v['batv']),float(v['batv']) - 3.00)
 
 while 1:
     data = s.recv(64)
-    value = data.split()[1]
-    sensor = data.split()[0].split('.')
-    if storage.get(sensor[2],False):
-        oldts = storage[str(sensor[2])]['bts']
-    else:
-        storage[sensor[2]] = {'batv':0,'ts':int(time.time()),'oldts':0,'bts':0}
-    storage[str(sensor[2])]['ts'] = int(time.time()) 
-    if sensor[3] == "B":
-        storage[str(sensor[2])]['oldts'] = oldts
-        storage[str(sensor[2])]['bts'] = int(time.time()) 
-        storage[sensor[2]]['batv'] = value
+    try:
+        value = data.split()[1]
+        sensor = data.split()[0].split('.')
+    except:
+        continue
+    try:
+        int(sensor[2]) 
+        if storage.get(sensor[2],False):
+            oldts = storage[str(sensor[2])]['bts']
+        else:
+            storage[sensor[2]] = {'batv':0,'ts':int(time.time()),'oldts':0,'bts':0,'lasttype':''}
+        storage[str(sensor[2])]['ts'] = int(time.time()) 
+        storage[str(sensor[2])]['lasttype'] = sensor[3]
+        if sensor[3] == "B":
+            storage[str(sensor[2])]['oldts'] = oldts
+            storage[str(sensor[2])]['bts'] = int(time.time())
+            storage[sensor[2]]['batv'] = value
+    except:
+        pass
     draw(storage)
-    error = False
